@@ -5,16 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <title>Upload File for OCR</title>
-    <nav class="navbar navbar-expand-lg bg-info text-dark navbar-dark py-3 fixed-top fw-bold fs-4">
+    <nav class="navbar navbar-expand-lg bg-dark text-light navbar-dark py-3 fixed-top fw-bold fs-4">
         <div class="container">
+
           <a href="#" class="navbar-brand fs-1">Upload File for OCR</a>
+        </div>
 </head>
 <body>
-   
+    <div class="container">
+        <br><br><br><br>
+        <div class="mb-3">
+            <input class="form-control form-control-sm" id="formFileSm" type="file">
+          </div>
     <form action="/" method="POST" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".jpg, .jpeg, .png, .pdf,.bmp,.gif,.tif,.tiff">
-        <button type="submit">Submit</button>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
+            
+              <button type="submit" class="btn btn-outline-primary">Submit</button>
+              <button type="button" class="btn btn-outline-primary" onclick="refreshPage()">Refresh</button>
+          </div>
     </form>
+</div>
+<div class="container">
+    </div>
+    <script>
+        function refreshPage() {
+            window.location.reload();  // Reload the current page
+        }
+    </script>
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 
 </body>
