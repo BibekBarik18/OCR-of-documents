@@ -53,3 +53,4 @@ word_predictions = map_predictions_to_words(predictions, ocr_data['text'])
 
 for word, prediction in word_predictions:
     print(f"{word}: {prediction}")
+hi this is bibek
