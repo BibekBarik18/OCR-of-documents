@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect, send_file
+from flask import Flask, render_template, request, send_file
 import tempfile
 import pytesseract
 from PIL import Image
 import fitz
 from io import BytesIO
+import base64
 
 # Configure Tesseract OCR executable path
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"  # Update with your Tesseract path
@@ -25,10 +26,9 @@ def handle_file_upload():
     if file:
         # Generate unique output filename
         output_filename = f"output_text_{file.filename}.txt"
-        image_path=file.filename
 
         if file.filename.endswith('.pdf'):
-            text = extract_text_from_pdf(file)
+            text, image_base64 = extract_text_from_pdf(file)
         else:
             # For image files (e.g., JPG), perform OCR using pytesseract with LSTM and page segmentation
             image = Image.open(BytesIO(file.read()))
@@ -42,16 +42,23 @@ def handle_file_upload():
             # Perform OCR using pytesseract with LSTM and page segmentation
             text = pytesseract.image_to_string(image, config='--oem 1 --psm 1')
 
+            # Encode image as base64 string
+            buffered = BytesIO()
+            image.save(buffered, format="JPEG")
+            image_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
+
         # Save extracted text to a text file
         with open(output_filename, 'w', encoding='utf-8') as txt_file:
             txt_file.write(text)
 
         # Return rendered template with text content
-        return render_template('result.html', text=text,image_path=image_path, download_link=output_filename)
+        return render_template('result.html', text=text, image_base64=image_base64, download_link=output_filename)
 
 # Function to extract text from a PDF using PyMuPDF (fitz) and perform OCR
 def extract_text_from_pdf(pdf_file):
     text = ""
+    image_base64 = None  # Initialize image_base64
+
     with tempfile.NamedTemporaryFile(delete=False) as temp_pdf:
         temp_pdf.write(pdf_file.read())
         temp_pdf.seek(0)
@@ -59,6 +66,7 @@ def extract_text_from_pdf(pdf_file):
 
         for page_num in range(len(pdf_document)):
             page = pdf_document.load_page(page_num)
+            text+=f"Page {page_num + 1}:\n"
 
             # Convert the page to an image (adjust resolution if needed)
             pix = page.get_pixmap()
@@ -74,7 +82,13 @@ def extract_text_from_pdf(pdf_file):
             page_text = pytesseract.image_to_string(img, config='--oem 1 --psm 6')
             text += page_text + "\n"
 
-    return text
+            # If you want to display the first page's image (for example), encode it as base64
+            if page_num == 0:
+                buffered = BytesIO()
+                img.save(buffered, format="JPEG")
+                image_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
+
+    return text, image_base64
 
 # Route to serve the text file for download
 @app1.route('/download/<filename>')
