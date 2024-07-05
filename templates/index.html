@@ -5,34 +5,125 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <title>Upload File for OCR</title>
-    <nav class="navbar navbar-expand-lg bg-dark text-light navbar-dark py-3 fixed-top fw-bold fs-4">
-        <div class="container">
-
-          <a href="#" class="navbar-brand fs-1">Upload File for OCR</a>
-        </div>
+    <style>
+        body {
+            background-color: #b681e2; /* Light gray background */
+        }
+        .navbar {
+            background-color: #343a40; /* Dark background for navbar */
+        }
+        .navbar-brand {
+            color: #17a2b8; /* Aqua blue text color for brand */
+        }
+        .form-control {
+            border-color: #17a2b8; /* Aqua blue border for form inputs */
+        }
+        .btn-success {
+            background-color: #28a745; /* Green submit button */
+            border-color: #28a745; /* Green border color */
+        }
+        .btn-success:hover {
+            background-color: #218838; /* Darker green on hover */
+            border-color: #1e7e34; /* Darker green border on hover */
+        }
+        .btn-warning {
+            background-color: #ffc107; /* Yellow reset button */
+            border-color: #ffc107; /* Yellow border color */
+        }
+        .btn-warning:hover {
+            background-color: #e0a800; /* Darker yellow on hover */
+            border-color: #d39e00; /* Darker yellow border on hover */
+        }
+        .text-primary {
+            color: #007bff; /* Blue primary text color */
+        }
+        .text-secondary {
+            color: #6c757d; /* Gray secondary text color */
+        }
+        .bg-white {
+            background-color: #ffffffdc; /* White background for instructions */
+        }
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none; /* Initially hidden */
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <br><br><br><br>
-        <div class="mb-3">
-            <input class="form-control form-control-sm" id="formFileSm" type="file">
-          </div>
-    <form action="/" method="POST" enctype="multipart/form-data">
-        <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
-            
-              <button type="submit" class="btn btn-outline-primary">Submit</button>
-              <button type="button" class="btn btn-outline-primary" onclick="refreshPage()">Refresh</button>
-          </div>
-    </form>
-</div>
-<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a href="#" class="navbar-brand fs-1 fw-bold">OCR File Reader</a>
+        </div>
+    </nav>
+
+    <div class="container mt-5 pt-5">
+        <div class="text-center my-5">
+            <h1 class="display-4 text-contrasting">Upload File for OCR</h1>
+        </div>
+        <form action="/" method="POST" enctype="multipart/form-data" onsubmit="showLoading()">
+            <div class="row align-items-center">
+                <div class="col-lg-8 mb-3">
+                    <input class="form-control form-control-lg border-primary" id="formFilelg" type="file" name="file" accept=".jpg, .jpeg, .png, .pdf, .bmp, .gif, .tif, .tiff" id="validationDefault01" required>
+                </div>
+                <div class="col-lg-2 mb-3">
+                    <button type="submit" class="btn btn-lg btn-success w-100">Submit</button>
+                </div>
+                <div class="col-lg-2 mb-3">
+                    <button type="button" class="btn btn-lg btn-warning w-100" onclick="refreshPage()">Reset</button>
+                </div>
+            </div>
+        </form>
     </div>
+
+    <div class="container my-5 p-4 bg-white shadow rounded">
+        <h1 class="text-center text-primary mb-4">Instructions</h1>
+        <h2 class="text-secondary">Input Page</h2>
+        <ol class="text-dark">
+            <li>Click on "Choose File" and select the required file for text extraction.</li>
+            <li>Accepted file types are - .jpg, .jpeg, .png, .pdf, .bmp, .gif, .tif, .tiff.</li>
+            <li>Click on the "Submit" button to perform text extraction.</li>
+            <li>Click on the "Reset" button to refresh the page.</li>
+        </ol>
+        <hr>
+        <h2 class="text-secondary">Output Page</h2>
+        <ol class="text-dark">
+            <li>The extracted text in editable format is available on the left-hand side of the screen.</li>
+            <li>The original image is provided on the right-hand side of the screen.</li>
+            <li>Click on "Download text as a file" to get the edited text in .txt format.</li>
+            <li>Click on "Download OCR output as file" to get the raw text in .txt format.</li>
+            <li>Click on the "Back" button to return to the homepage.</li>
+        </ol>
+    </div>
+
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner-border text-success" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
     <script>
         function refreshPage() {
-            window.location.reload();  // Reload the current page
+            window.location.reload();
+        }
+
+        function showLoading() {
+            document.getElementById('loading-overlay').style.display = 'flex';
         }
     </script>
-    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 </body>
 </html>

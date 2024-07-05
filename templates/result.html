@@ -2,40 +2,138 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="OCR">
+    <meta name="keywords" content="web design blog">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <title>OCR Result</title>
+    <style>
+        body {
+            background-color: #b681e2; /* Light purple background */
+        }
+        .navbar {
+            background-color: #343a40; /* Dark background for navbar */
+        }
+        .navbar-brand {
+            color: #17a2b8; /* Aqua blue text color for brand */
+        }
+        .btn-primary {
+            background-color: #1d4abd; /* Dark gray button */
+            border-color: #0b298c; /* Dark gray border color */
+        }
+        .btn-primary:hover {
+            background-color: #031a9a; /* Darker gray on hover */
+            border-color: #0b046f; /* Darker gray border on hover */
+        }
+        .btn-success {
+            background-color: #28a745; /* Green button */
+            border-color: #28a745; /* Green border color */
+        }
+        .btn-success:hover {
+            background-color: #218838; /* Darker green on hover */
+            border-color: #1e7e34; /* Darker green border on hover */
+        }
+        .btn-danger {
+            background-color: #dc3545; /* Red button */
+            border-color: #dc3545; /* Red border color */
+        }
+        .btn-danger:hover {
+            background-color: #c82333; /* Darker red on hover */
+            border-color: #bd2130; /* Darker red border on hover */
+        }
+        .text-info {
+            color: #17a2b8; /* Aqua blue text color */
+        }
+        .text-primary {
+            color: #007bff; /* Blue primary text color */
+        }
+        .text-secondary {
+            color: #6c757d; /* Gray secondary text color */
+        }
+        .bg-white {
+            background-color: #ffffffdc; /* White background */
+        }
+        .border {
+            border-color: #6c757d; /* Gray border color */
+        }
+        .accordion-button.collapsed {
+            color: #28a745; /* Green accordion button color */
+            border-color: #28a745; /* Green accordion button border color */
+        }
+        .img-fluid {
+            max-width: 100%; /* Ensure image responsiveness */
+            height: auto; /* Maintain aspect ratio */
+            max-height: calc(100vh - 250px); /* Limit height to fit A4 dimensions */
+            border: 2px solid #6c757d; /* Gray border for images */
+        }
+        #extracted-text {
+            height: calc(100vh - 250px); /* Set height for text area */
+            resize: none; /* Disable text area resizing */
+        }
+        .section-container {
+            background-color: #d5a9f1; /* Light purple background for sections */
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-light">
     <div class="container">
-              <a href="#" class="navbar-brand fs-1">OCR Result</a>
-        
-        <div class="row">
-            <div class="col-md-6">
-                <h2><strong>Extracted Text:</strong></h2>
-                <textarea id="extracted-text" rows="20" cols="80">{{ text }}</textarea>
-                
-                <div>
-                    <p><a href="#" id="download-text-link">Download the above text as a file</a></p>
+        <header class="bg-secondary text-info text-center py-4 mb-4">
+            <h1>OCR Result</h1>
+        </header>
+  
+        <div class="section-container">
+            <div class="row mb-4">
+                <div class="col-md-4 mb-3">
+                    <button class="btn btn-primary w-100" id="download-text-button">Download Text as File</button>
                 </div>
-                
-                {% if download_link %}
-                <div>
-                    <p><a href="{{ url_for('download_file', filename=download_link) }}">Download OCR Output as a file</a></p>
+                <div class="col-md-4 mb-3">
+                    <a class="btn btn-success w-100" href="{{ url_for('download_file', filename=download_link) }}">Download OCR Output as File</a>
                 </div>
-                {% endif %}
+                <div class="col-md-4 mb-3">
+                    <a class="btn btn-danger w-100" href="http://127.0.0.1:5000/">Back</a>
+                </div>
             </div>
-
-            <div class="col-md-6">
-                <h2><strong>Original Image:</strong></h2>
-                <img src="{{ url_for('static', filename=image_path) }}" class="img-fluid" alt="Original Image">
+            <hr>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <h2 class="text-secondary"><strong>Extracted Text:</strong></h2>
+                    <textarea id="extracted-text" class="form-control" rows="20">{{ text }}</textarea>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <h2 class="text-secondary"><strong>Original Image:</strong></h2>
+                    <img src="data:image/jpeg;base64,{{ image_base64 }}" class="img-fluid border" alt="Original Image">
+                </div>
             </div>
         </div>
     </div>
 
+    <section id="questions" class="p-5">
+        <div class="container">
+            <div class="section-container">
+                <h2 class="text-center mb-4 text-primary">Raw Text</h2>
+                <div class="accordion accordion-flush" id="questions">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#question-one">
+                                Click for Raw Text
+                            </button>
+                        </h2>
+                        <div id="question-one" class="accordion-collapse collapse" data-bs-parent="#questions">
+                            <div class="accordion-body">
+                                {{ text }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <script>
-        // JavaScript to handle download link click
-        document.getElementById('download-text-link').addEventListener('click', function() {
+        document.getElementById('download-text-button').addEventListener('click', function() {
             var text = document.getElementById('extracted-text').value;
             var blob = new Blob([text], { type: 'text/plain' });
             var url = URL.createObjectURL(blob);
@@ -48,6 +146,7 @@
             URL.revokeObjectURL(url);
         });
     </script>
+
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 </body>
 </html>
