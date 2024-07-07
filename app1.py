@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, after_this_request
 import tempfile
 import pytesseract
 from PIL import Image
 import fitz
 from io import BytesIO
 import base64
+
 
 # Configure Tesseract OCR executable path
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"  # Update with your Tesseract path
@@ -25,7 +26,7 @@ def handle_file_upload():
 
     if file:
         # Generate unique output filename
-        output_filename = f"output_text_{file.filename}.txt"
+        output_filename = f"output_{file.filename}.txt"
 
         if file.filename.endswith('.pdf'):
             text, image_base64 = extract_text_from_pdf(file)
@@ -97,4 +98,4 @@ def download_file(filename):
 
 # Run the Flask application
 if __name__ == '__main__':
-    app1.run(debug=True)
+    app1.run(debug=True, host='0.0.0.0')

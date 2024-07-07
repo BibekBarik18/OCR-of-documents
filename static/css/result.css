@@ -1,0 +1,68 @@
+body {
+    background-color: #b681e2; /* Light purple background */
+}
+.navbar {
+    background-color: #343a40; /* Dark background for navbar */
+}
+.navbar-brand {
+    color: #17a2b8; /* Aqua blue text color for brand */
+}
+.btn-primary {
+    background-color: #1d4abd; /* Dark gray button */
+    border-color: #0b298c; /* Dark gray border color */
+}
+.btn-primary:hover {
+    background-color: #031a9a; /* Darker gray on hover */
+    border-color: #0b046f; /* Darker gray border on hover */
+}
+.btn-success {
+    background-color: #28a745; /* Green button */
+    border-color: #28a745; /* Green border color */
+}
+.btn-success:hover {
+    background-color: #218838; /* Darker green on hover */
+    border-color: #1e7e34; /* Darker green border on hover */
+}
+.btn-danger {
+    background-color: #dc3545; /* Red button */
+    border-color: #dc3545; /* Red border color */
+}
+.btn-danger:hover {
+    background-color: #c82333; /* Darker red on hover */
+    border-color: #bd2130; /* Darker red border on hover */
+}
+.text-info {
+    color: #17a2b8; /* Aqua blue text color */
+}
+.text-primary {
+    color: #007bff; /* Blue primary text color */
+}
+.text-secondary {
+    color: #6c757d; /* Gray secondary text color */
+}
+.bg-white {
+    background-color: #ffffffdc; /* White background */
+}
+.border {
+    border-color: #6c757d; /* Gray border color */
+}
+.accordion-button.collapsed {
+    color: #28a745; /* Green accordion button color */
+    border-color: #28a745; /* Green accordion button border color */
+}
+.img-fluid {
+    max-width: 100%; /* Ensure image responsiveness */
+    height: auto; /* Maintain aspect ratio */
+    max-height: calc(150vh - 300px); /* Limit height to fit A4 dimensions */
+    border: 2px solid #6c757d; /* Gray border for images */
+}
+#extracted-text {
+    height: calc(148vh - 300px); /* Set height for text area */
+    resize: none; /* Disable text area resizing */
+}
+.section-container {
+    background-color: #d5a9f1; /* Light purple background for sections */
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}

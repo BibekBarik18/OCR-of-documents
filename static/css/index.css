@@ -1,0 +1,58 @@
+body {
+    background-color: #b681e2; /* Light gray background */
+}
+.navbar {
+    background-color: #343a40; /* Dark background for navbar */
+}
+.navbar-brand {
+    color: #17a2b8; /* Aqua blue text color for brand */
+}
+.navbar-brand img {
+    height: 40px;
+    margin-right: 10px;
+}
+.form-control {
+    border-color: #17a2b8; /* Aqua blue border for form inputs */
+}
+.btn-success {
+    background-color: #28a745; /* Green submit button */
+    border-color: #28a745; /* Green border color */
+}
+.btn-success:hover {
+    background-color: #218838; /* Darker green on hover */
+    border-color: #1e7e34; /* Darker green border on hover */
+}
+.btn-warning {
+    background-color: #ffc107; /* Yellow reset button */
+    border-color: #ffc107; /* Yellow border color */
+}
+.btn-warning:hover {
+    background-color: #e0a800; /* Darker yellow on hover */
+    border-color: #d39e00; /* Darker yellow border on hover */
+}
+.text-primary {
+    color: #007bff; /* Blue primary text color */
+}
+.text-secondary {
+    color: #6c757d; /* Gray secondary text color */
+}
+.bg-white {
+    background-color: #ffffffdc; /* White background for instructions */
+}
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    display: none; /* Initially hidden */
+}
