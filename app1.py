@@ -34,8 +34,12 @@ def handle_file_upload():
             # For image files (e.g., JPG), perform OCR using pytesseract with LSTM and page segmentation
             image = Image.open(BytesIO(file.read()))
 
+            abs=image.height/image.width
+            new_width=2550
+            new_height=abs*new_width
+
             # Resize image to a higher resolution (e.g., 300 DPI)
-            image = image.resize((2550, 3300), resample=Image.LANCZOS)
+            image = image.resize((int(new_width), int(new_height)), resample=Image.LANCZOS)
 
             # Preprocess image (example: convert to grayscale)
             image = image.convert('L')
@@ -73,8 +77,12 @@ def extract_text_from_pdf(pdf_file):
             pix = page.get_pixmap()
             img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
 
+            abs=pix.height/pix.width
+            new_width=2550
+            new_height=abs*new_width
+
             # Resize image to a higher resolution (e.g., 300 DPI)
-            img = img.resize((2550, 3300), resample=Image.LANCZOS)
+            img = img.resize((int(new_width),int(new_height)), resample=Image.LANCZOS)
 
             # Preprocess image (example: convert to grayscale)
             img = img.convert('L')
@@ -90,6 +98,55 @@ def extract_text_from_pdf(pdf_file):
                 image_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
 
     return text, image_base64
+
+@app1.route('/resize_pdf',methods=['Get','Post'])
+def main():
+    if request.method == 'POST':
+        return resize_pdf()
+    return render_template('resize_pdf.html')
+def resize_pdf():
+    file = request.files['file']
+    if file.filename.endswith('.pdf'):
+        with tempfile.NamedTemporaryFile(delete=False) as temp_pdf:
+                temp_pdf.write(file.read())
+                temp_pdf.seek(0)
+                pdf_document = fitz.open(temp_pdf.name, filetype="pdf")
+
+                resized_pages=[]
+
+                for page_num in range(len(pdf_document)):
+                    page = pdf_document.load_page(page_num)
+
+                    # Convert the page to an image (adjust resolution if needed)
+                    pix = page.get_pixmap()
+                    img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+
+                    abs=pix.height/pix.width
+                    new_width=595
+                    new_height=abs*new_width
+
+                    img = img.resize((int(new_width),int(new_height)), resample=Image.LANCZOS)
+
+                    resized_pages.append(img)
+
+                    # Create a temporary file to save the output PDF
+                with tempfile.NamedTemporaryFile(delete=False) as temp_pdf:
+                    # Save resized images as pages in the output PDF
+                    with fitz.open() as output_pdf_document:
+                        for img_resized in resized_pages:
+                            img_bytes = img_resized.tobytes()
+                            img_memory = fitz.open(stream=img_bytes, filetype="jpg")
+                            output_pdf_document.new_page(width=img_memory[0].rect.width, height=img_memory[0].rect.height)
+                            output_pdf_document[-1].show_pdf_page(output_pdf_document[-1].rect, img_memory, 0)
+                            img_memory.close()
+                        
+                        # Save the output PDF to the temporary file
+                        output_pdf_document.save(temp_pdf.name)
+
+                # Return the resized PDF file to the client
+                return send_file(temp_pdf.name, as_attachment=True, download_name=f"resized_{file.filename}")
+
+
 
 # Route to serve the text file for download
 @app1.route('/download/<filename>')

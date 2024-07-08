@@ -1,70 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="description" content="OCR">
     <meta name="keywords" content="web design blog">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">    
     <title>OCR Result</title>
 </head>
+
 <body class="bg-light">
-    <div class="container">
-        <header class="bg-secondary text-info text-center py-4 mb-4">
-            <h1>OCR Result</h1>
-        </header>
-  
-        <div class="section-container">
+
+    <div class="alert alert-primary text-center">
+        <h1>OCR OUTPUT</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="container">
             <div class="row mb-4">
-                <div class="col-md-4 mb-3">
+                <div class="col mb-3">
                     <button class="btn btn-primary w-100" id="download-text-button">Download Text as File</button>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <a class="btn btn-success w-100" href="{{ url_for('download_file', filename=download_link) }}">Download OCR Output as File</a>
+                <div class="col mb-3">
+                    <a class="btn btn-success w-100"
+                        href="{{ url_for('download_file', filename=download_link) }}">Download OCR Output as File</a>
                 </div>
-                <div class="col-md-4 mb-3">
+                <div class="col mb-3">
                     <a class="btn btn-danger w-100" href="http://127.0.0.1:5000/">Back</a>
                 </div>
             </div>
-            <hr>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <h2 class="text-secondary"><strong>Extracted Text:</strong></h2>
-                    <textarea id="extracted-text" class="form-control" rows="20">{{ text }}</textarea>
+        </div>
+
+        <hr>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+                <h2 class="text-danger" ><strong>Extracted Text:</strong></h2>
+                <button id="copy-button" class="btn btn-outline-secondary" type="button" onclick="copyText()" >Copy text</button>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <h2 class="text-secondary"><strong>Original Image:</strong></h2>
-                    <img src="data:image/jpeg;base64,{{ image_base64 }}" class="img-fluid border" alt="Original Image">
+                <textarea id="extracted-text" class="form-control" rows="50">{{ text }}</textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+                <h2 class="text-danger"><strong>Original Image:</strong></h2>
+                <img src="data:image/jpeg;base64,{{ image_base64 }}" class="img-fluid border" alt="Original Image">
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+
+    <div class="section-container">
+        <h2 class="text-center mb-4 text-danger">Raw Text</h2>
+        <div class="accordion accordion-flush" id="questions">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#question-one">
+                        Click for Raw Text
+                    </button>
+                </h2>
+                <div id="question-one" class="accordion-collapse collapse" data-bs-parent="#questions">
+                    <div class="accordion-body">
+                        <textarea id="extracted-text" class="form-control" rows="25" readonly>{{ text }}</textarea>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <section id="questions" class="p-5">
-        <div class="container">
-            <div class="section-container">
-                <h2 class="text-center mb-4 text-primary">Raw Text</h2>
-                <div class="accordion accordion-flush" id="questions">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#question-one">
-                                Click for Raw Text
-                            </button>
-                        </h2>
-                        <div id="question-one" class="accordion-collapse collapse" data-bs-parent="#questions">
-                            <div class="accordion-body">
-                                {{ text }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <script>
-        document.getElementById('download-text-button').addEventListener('click', function() {
+        document.getElementById('download-text-button').addEventListener('click', function () {
             var text = document.getElementById('extracted-text').value;
             var blob = new Blob([text], { type: 'text/plain' });
             var url = URL.createObjectURL(blob);
@@ -77,7 +84,15 @@
             URL.revokeObjectURL(url);
         });
     </script>
-
+    <script>
+        function copyText() {
+            var textArea = document.getElementById("extracted-text");
+            textArea.select();
+            document.execCommand("copy");
+        }
+    </script>
+    
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 </body>
+
 </html>

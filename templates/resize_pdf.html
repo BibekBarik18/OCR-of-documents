@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload and Resize PDF</title>
+</head>
+
+<body>
+    <h1>Upload and Resize PDF</h1>
+    <form action="/resize_pdf" method="post" enctype="multipart/form-data">
+        <label for="pdf_file">Select a PDF file:</label><br>
+        <input type="file" id="pdf_file" name="file" accept=".pdf"><br><br>
+        <input type="submit" value="Upload and Resize">
+    </form>
+</body>
+
+</html>

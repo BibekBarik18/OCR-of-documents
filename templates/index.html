@@ -1,78 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-    <title>Upload File for OCR</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+  <title>Upload File for OCR</title>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container">
-            <a href="#" class="navbar-brand fs-1 fw-bold">
-                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
-                OCR File Reader
-            </a>
-        </div>
-    </nav>
 
-    <div class="container mt-5 pt-5">
-        <div class="text-center my-5">
-            <h1 class="display-4 text-contrasting">Upload File for OCR</h1>
-        </div>
-        <form action="/" method="POST" enctype="multipart/form-data" onsubmit="showLoading()">
-            <div class="row align-items-center">
-                <div class="col-lg-8 mb-3">
-                    <input class="form-control form-control-lg border-primary" id="formFilelg" type="file" name="file" accept=".jpg, .jpeg, .png, .pdf, .bmp, .gif, .tif, .tiff" id="validationDefault01" required>
-                </div>
-                <div class="col-lg-2 mb-3">
-                    <button type="submit" class="btn btn-lg btn-success w-100">Submit</button>
-                </div>
-                <div class="col-lg-2 mb-3">
-                    <button type="button" class="btn btn-lg btn-warning w-100" onclick="refreshPage()">Reset</button>
-                </div>
-            </div>
-        </form>
+<body class="bg-light">
+  <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <div class="container-fluid">
+      <strong><a class="navbar-brand" style="color: #fff700;" href="<?php echo url('/'); ?>">Cordite Factory
+          Aruvankadu</a></strong>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a style="color:white" class="nav-link" href="<?php echo url('/'); ?>">OCR File Reader</a>
+          </li>
+          <li class="nav-item">
+            <a style="color:white" class="nav-link" href="/resize_pdf">PDF File Size Reducer</a>
+          </li>
+          <li class="nav-item">
+            <a style="color:white" class="nav-link" href="<?php echo url('old_orders'); ?>">Image File Size Reducer</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-3">
+    <div class="alert alert-primary text-center">
+      <h1>OCR File Reader</h1>
     </div>
 
-    <div class="container my-5 p-4 bg-white shadow rounded">
-        <h1 class="text-center text-primary mb-4">Instructions</h1>
-        <h2 class="text-secondary">Input Page</h2>
-        <ol class="text-dark">
-            <li>Click on "Choose File" and select the required file for text extraction.</li>
-            <li>Accepted file types are - .jpg, .jpeg, .png, .pdf, .bmp, .gif, .tif, .tiff.</li>
-            <li>Click on the "Submit" button to perform text extraction.</li>
-            <li>Click on the "Reset" button to refresh the page.</li>
-        </ol>
-        <hr>
-        <h2 class="text-secondary">Output Page</h2>
-        <ol class="text-dark">
-            <li>The extracted text in editable format is available on the left-hand side of the screen.</li>
-            <li>The original image is provided on the right-hand side of the screen.</li>
-            <li>Click on "Download text as a file" to get the edited text in .txt format.</li>
-            <li>Click on "Download OCR output as file" to get the raw text in .txt format.</li>
-            <li>Click on the "Back" button to return to the homepage.</li>
-            <li>Click on Raw Text in the bottom screen to view the extracted text in raw format</li>
-        </ol>
+    <div class="text-center my-5">
+      <h4 class="text-dark text-left">Upload File for OCR</h4>
     </div>
-
-    <div class="loading-overlay" id="loading-overlay">
-        <div class="spinner-border text-success" role="status">
-            <span class="visually-hidden">Loading...</span>
+    <form action="/" method="POST" enctype="multipart/form-data" onsubmit="showLoading()">
+      <div class="row align-items-center">
+        <div class="col-lg-8 mb-3">
+          <input class="form-control form-control-lg border-primary" id="formFilelg" type="file" name="file"
+            accept=".jpg, .jpeg, .png, .pdf, .bmp, .gif, .tif, .tiff" id="validationDefault01" required>
         </div>
+        <div class="col-lg-2 mb-3">
+          <button type="submit" class="btn btn-lg btn-success w-100">Submit</button>
+        </div>
+        <div class="col-lg-2 mb-3">
+          <button type="button" class="btn btn-lg btn-warning w-100" onclick="refreshPage()">Reset</button>
+        </div>
+      </div>
+    </form>
+
+  </div>
+
+  <div class="container my-5 p-4 bg-white shadow rounded">
+    <h1 class="text-center text-primary mb-4">Instructions</h1>
+    <hr>
+    <h2 class="text-danger">Input Page</h2>
+    <ol class="text-dark">
+      <li>Click on <b>"Choose File"</b> and select the required file for text extraction.</li>
+      <li>Accepted file types are - .jpg, .jpeg, .png, .pdf, .bmp, .gif, .tif, .tiff.</li>
+      <li>Click on the <b>"Submit"</b> button to perform text extraction.</li>
+      <li>Click on the <b>"Reset"</b> button to refresh the page.</li>
+    </ol>
+    <hr>
+    <h2 class="text-danger">Output Page</h2>
+    <ol class="text-dark">
+      <li>The extracted text in editable format is available on the left-hand side of the screen.</li>
+      <li>The original image is provided on the right-hand side of the screen.</li>
+      <li>Click on <b>"Download text as a file"</b> to get the edited text in .txt format.</li>
+      <li>Click on <b>"Download OCR output as file"</b> to get the raw text in .txt format.</li>
+      <li>Click on the <b>"Back"</b> button to return to the homepage.</li>
+      <li>Click on <b>Raw Text</b> in the bottom screen to view the extracted text in raw format</li>
+    </ol>
+  </div>
+
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="spinner-border text-success" role="status">
+      <span class="visually-hidden">Loading...</span>
     </div>
+  </div>
 
-    <script>
-        function refreshPage() {
-            window.location.reload();
-        }
+  <script>
+    function refreshPage() {
+      window.location.reload();
+    }
 
-        function showLoading() {
-            document.getElementById('loading-overlay').style.display = 'flex';
-        }
-    </script>
+    function showLoading() {
+      document.getElementById('loading-overlay').style.display = 'flex';
+    }
+  </script>
 
-    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 </body>
+
 </html>
