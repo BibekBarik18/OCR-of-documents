@@ -5,15 +5,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload and Resize PDF</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .btn {
+            font-size: 1.2rem;
+        }
+
+        .loading {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Upload and Resize PDF</h1>
-    <form action="/resize_pdf" method="post" enctype="multipart/form-data">
-        <label for="pdf_file">Select a PDF file:</label><br>
-        <input type="file" id="pdf_file" name="file" accept=".pdf"><br><br>
-        <input type="submit" value="Upload and Resize">
-    </form>
+    <div class="container">
+        <h1 class="text-center mb-4">Upload and Resize PDF</h1>
+        <form action="/resize_pdf" method="POST" enctype="multipart/form-data" onsubmit="showLoading()">
+            <div class="row align-items-center mb-3">
+                <div class="col-lg-8 mb-3">
+                    <input class="form-control form-control-lg border-primary" id="formFilelg" type="file" name="file"
+                        accept=".jpg, .jpeg, .png, .pdf, .bmp, .gif, .tif, .tiff" required>
+                </div>
+                <div class="col-lg-2 mb-3">
+                    <button type="submit" class="btn btn-lg btn-success w-100">Submit</button>
+                </div>
+                <div class="col-lg-2 mb-3">
+                    <button type="button" class="btn btn-lg btn-warning w-100" onclick="refreshPage()">Reset</button>
+                </div>
+            </div>
+            <div class="row align-items-center mt-3">
+                <div class="col-lg-6 mb-3">
+                    <label for="dpiSelect" class="form-label">Reduce quality of the image by:</label>
+                    <select class="form-select" id="dpiSelect" name="dpi">
+                        <option value="0">0%</option>
+                        <option value="10">10%</option>
+                        <option value="20">20%</option>
+                        <option value="30">30%</option>
+                        <option value="40">40%</option>
+                        <option value="50" selected>50%</option>
+                        <option value="60">60%</option>
+                        <option value="70">70%</option>
+                        <option value="80">80%</option>
+                        <option value="90">90%</option>
+                        <option value="100">100%</option>
+                    </select>
+                </div>
+                <div class="col-lg-6 mb-3">
+                    <label for="pixSelect" class="form-label">Reduce size of the image by:</label>
+                    <select class="form-select" id="pixSelect" name="pix">
+                        <option value="0" selected>0%</option>
+                        <option value="10">10%</option>
+                        <option value="20">20%</option>
+                        <option value="30">30%</option>
+                        <option value="40">40%</option>
+                        <option value="50">50%</option>
+                        <option value="60">60%</option>
+                        <option value="70">70%</option>
+                        <option value="80">80%</option>
+                        <option value="90">90%</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+        <div class="loading text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <div class="d-flex justify-content-center">
+                <a class="btn btn-danger w-25" href="http://127.0.0.1:5000/">Back</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function refreshPage() {
+            window.location.reload();
+        }
+    </script>
+
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 </body>
 
 </html>
