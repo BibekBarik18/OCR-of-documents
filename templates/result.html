@@ -23,11 +23,10 @@
                     <button class="btn btn-primary w-100" id="download-text-button">Download Text as File</button>
                 </div>
                 <div class="col mb-3">
-                    <a class="btn btn-success w-100"
-                        href="{{ url_for('download_file', filename=download_link) }}">Download OCR Output as File</a>
+                    <button class="btn btn-success w-100" id="download-raw-text-button">Download OCR Output as File</button>
                 </div>
                 <div class="col mb-3">
-                    <a class="btn btn-danger w-100" href="http://127.0.0.1:5000/">Back</a>
+                    <a class="btn btn-danger w-100" href="/">Back</a>
                 </div>
             </div>
         </div>
@@ -63,7 +62,7 @@
                 </h2>
                 <div id="question-one" class="accordion-collapse collapse" data-bs-parent="#questions">
                     <div class="accordion-body">
-                        <textarea id="extracted-text" class="form-control" rows="25" readonly>{{ text }}</textarea>
+                        <textarea id="extracted-raw-text" class="form-control" rows="25" readonly>{{ text }}</textarea>
                     </div>
                 </div>
             </div>
@@ -84,14 +83,28 @@
             URL.revokeObjectURL(url);
         });
     </script>
-    <script>
+        <script>
+            document.getElementById('download-raw-text-button').addEventListener('click', function () {
+                var text = document.getElementById('extracted-raw-text').value;
+                var blob = new Blob([text], { type: 'text/plain' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'OCR_Output.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        </script>
+        <script>
         function copyText() {
             var textArea = document.getElementById("extracted-text");
             textArea.select();
             document.execCommand("copy");
         }
     </script>
-    
+
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 </body>
 

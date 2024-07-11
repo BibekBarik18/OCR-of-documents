@@ -4,39 +4,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload and Resize PDF</title>
+    <title>PDF File Size Reducer</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .container {
-            margin-top: 50px;
-        }
-
-        .form-label {
-            font-weight: bold;
-        }
-
-        .btn {
-            font-size: 1.2rem;
-        }
-
-        .loading {
-            display: none;
-        }
-    </style>
 </head>
 
 <body>
+  <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <div class="container-fluid">
+      <strong><a class="navbar-brand" style="color: #fff700;" href="<?php echo url('/'); ?>">Cordite Factory
+          Aruvankadu</a></strong>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a style="color:white" class="nav-link" href="/">OCR File Reader</a>
+          </li>
+          <li class="nav-item">
+            <a style="color:white" class="nav-link" href="/resize_pdf">PDF File Size Reducer</a>
+          </li>
+          <li class="nav-item">
+            <a style="color:white" class="nav-link" href="/resize_image">Image File Size Reducer</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-3">
+    <div class="alert alert-primary text-center">
+      <h1>PDF File Size Reducer</h1>
+    </div>
+
+      <div class="text-center my-5">
+      <h4 class="text-dark text-left">Upload PDF for Resizing</h4>
+    </div>
+
     <div class="container">
-        <h1 class="text-center mb-4">Upload and Resize PDF</h1>
         <form action="/resize_pdf" method="POST" enctype="multipart/form-data" onsubmit="showLoading()">
             <div class="row align-items-center mb-3">
                 <div class="col-lg-8 mb-3">
                     <input class="form-control form-control-lg border-primary" id="formFilelg" type="file" name="file"
-                        accept=".jpg, .jpeg, .png, .pdf, .bmp, .gif, .tif, .tiff" required>
+                        accept=".pdf" required>
                 </div>
                 <div class="col-lg-2 mb-3">
                     <button type="submit" class="btn btn-lg btn-success w-100">Submit</button>
@@ -45,51 +57,12 @@
                     <button type="button" class="btn btn-lg btn-warning w-100" onclick="refreshPage()">Reset</button>
                 </div>
             </div>
-            <div class="row align-items-center mt-3">
-                <div class="col-lg-6 mb-3">
-                    <label for="dpiSelect" class="form-label">Reduce quality of the image by:</label>
-                    <select class="form-select" id="dpiSelect" name="dpi">
-                        <option value="0">0%</option>
-                        <option value="10">10%</option>
-                        <option value="20">20%</option>
-                        <option value="30">30%</option>
-                        <option value="40">40%</option>
-                        <option value="50" selected>50%</option>
-                        <option value="60">60%</option>
-                        <option value="70">70%</option>
-                        <option value="80">80%</option>
-                        <option value="90">90%</option>
-                        <option value="100">100%</option>
-                    </select>
-                </div>
-                <div class="col-lg-6 mb-3">
-                    <label for="pixSelect" class="form-label">Reduce size of the image by:</label>
-                    <select class="form-select" id="pixSelect" name="pix">
-                        <option value="0" selected>0%</option>
-                        <option value="10">10%</option>
-                        <option value="20">20%</option>
-                        <option value="30">30%</option>
-                        <option value="40">40%</option>
-                        <option value="50">50%</option>
-                        <option value="60">60%</option>
-                        <option value="70">70%</option>
-                        <option value="80">80%</option>
-                        <option value="90">90%</option>
-                    </select>
-                </div>
-            </div>
+            <label for="action">Choose action:</label>
+        <select id="action" name="action">
+            <option value="compress">Compress PDF</option>
+            <option value="resize">Resize PDF</option>
+        </select><br><br>
         </form>
-        <div class="loading text-center">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-        <div class="text-center mt-3">
-            <div class="d-flex justify-content-center">
-                <a class="btn btn-danger w-25" href="http://127.0.0.1:5000/">Back</a>
-            </div>
-        </div>
-    </div>
 
     <script>
         function refreshPage() {
@@ -97,7 +70,7 @@
         }
     </script>
 
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 </body>
 
 </html>

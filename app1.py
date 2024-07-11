@@ -3,11 +3,14 @@ import tempfile
 import pytesseract
 from PIL import Image
 import fitz
+import os
+import io
 from io import BytesIO
 import base64
+from PyPDF2 import PdfReader, PdfWriter
 
 # Configure Tesseract OCR executable path
-pytesseract.pytesseract.tesseract_cmd = r"C:\Users\User\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 # Initialize Flask application
 app1 = Flask(__name__)
 
@@ -47,17 +50,8 @@ def handle_file_upload():
             # Perform OCR using pytesseract with LSTM and page segmentation
             text = pytesseract.image_to_string(image, config='--oem 1 --psm 1')
 
-            # Encode image as base64 string
-            buffered = BytesIO()
-            image.save(buffered, format="JPEG")
-            image_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
-
-        # Save extracted text to a text file
-        with open(output_filename, 'w', encoding='utf-8') as txt_file:
-            txt_file.write(text)
-
         # Return rendered template with text content
-        return render_template('result.html', text=text, image_base64=image_base64, download_link=output_filename)
+        return render_template('result.html', text=text, image_base64=image_base64)
 
 
 # Function to extract text from a PDF using PyMuPDF (fitz) and perform OCR
@@ -100,107 +94,18 @@ def extract_text_from_pdf(pdf_file):
 
     return text, image_base64
 
-@app1.route('/resize_pdf', methods=['GET','POST'])
-def main():
+@app1.route('/resize_image', methods=['GET','POST'])
+def man():
     if request.method == 'POST':
-        return resize_pdf()
-    return render_template('resize_pdf.html')
+        return resize_image()
+    return render_template('resize_image.html')
 
-def resize_pdf():
+def resize_image():
     file = request.files['file']
     pr_dpi = int(request.form['dpi'])  # Get selected DPI as percentage
     pr_pix=int(request.form['pix'])
 
     if file:
-
-
-        if file.filename.endswith('.pdf'):
-
-            try:
-                # Create a temporary file for the output PDF
-                temp_output_pdf = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
-                print(f"Temporary output PDF created: {temp_output_pdf.name}")
-
-                with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf:
-                    temp_pdf.write(file.read())
-                    temp_pdf.seek(0)
-                    print(f"Temporary input PDF created: {temp_pdf.name}")
-
-                    # Open the input PDF file
-                    try:
-                        pdf_document = fitz.open(temp_pdf.name)
-                        print(f"PDF document opened: {temp_pdf.name}")
-                    except Exception as e:
-                        print(f"Error opening PDF: {e}")
-                        raise ValueError("The provided file is not a valid PDF.")
-
-                    # Create a new PDF for the output
-                    output_pdf = fitz.open()
-                    print("Output PDF created")
-
-                    for page_num in range(len(pdf_document)):
-                        try:
-                            page = pdf_document.load_page(page_num)
-                            print(f"Page {page_num} loaded")
-
-                            # Convert the page to an image (adjust resolution if needed)
-                            pix = page.get_pixmap()
-                            img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-                            print(f"Page {page_num} converted to image")
-
-                            # Retrieve current DPI
-                            current_dpi = (300, 300)  # Assuming a default DPI of 300, as Pixmap doesn't carry DPI info
-
-                            # Convert DPI tuple to a list
-                            dpi_list = list(current_dpi)
-
-                            # Adjust the DPI value
-                            new_val = (pr_dpi / 100) * dpi_list[0]
-                            new_dpi = dpi_list[0] - new_val
-
-                            # Resize the image while maintaining aspect ratio
-                            aspect_ratio = img.height / img.width
-                            new_pix = (pr_pix / 100) * img.width
-                            new_width = int(img.width - new_pix)
-                            new_height = int(aspect_ratio * new_width)
-
-                            img_resized = img.resize((new_width, new_height), Image.LANCZOS)
-                            print(f"Image resized for page {page_num}")
-
-                            # Check and convert image mode if necessary
-                            if img_resized.mode in ('RGBA', 'P'):
-                                img_resized = img_resized.convert('RGB')
-                            print(f"Image mode checked for page {page_num}")
-
-                            # Convert image to bytes and create a PDF page from it
-                            img_bytes = BytesIO()
-                            img_resized.save(img_bytes, format='JPEG', dpi=(new_dpi, new_dpi))
-                            img_bytes.seek(0)
-                            print(f"Image saved to bytes for page {page_num}")
-
-                            img_pdf = fitz.open(stream=img_bytes.read(), filetype='jpeg')
-                            page_rect = fitz.Rect(0, 0, new_width, new_height)
-                            output_pdf.new_page(width=page_rect.width, height=page_rect.height)
-                            output_pdf[-1].show_pdf_page(page_rect, img_pdf, 0)
-                            img_pdf.close()
-                            print(f"Image added to output PDF for page {page_num}")
-
-                        except Exception as e:
-                            print(f"Error processing page {page_num}: {e}")
-                            raise ValueError(f"An error occurred while processing page {page_num} of the PDF file.")
-
-                    # Save the output PDF to the temporary file
-                    output_pdf.save(temp_output_pdf.name)
-                    output_pdf.close()
-                    pdf_document.close()
-                    print("Output PDF saved and documents closed")
-
-                return send_file(temp_output_pdf.name, as_attachment=True, download_name=f"resized_{file.filename}")
-            except Exception as e:
-                print(f"An error occurred: {e}")
-                raise ValueError("An error occurred while processing the PDF file.")
-
-        else:
             image = Image.open(BytesIO(file.read()))
 
             # Retrieve current DPI
@@ -236,11 +141,80 @@ def resize_pdf():
 
             return send_file(img_io, as_attachment=True, download_name=f"resized_{file.filename}")
 
+@app1.route('/resize_pdf', methods=['GET','POST'])
+def lan():
+    if request.method == 'POST':
+            # Check if 'action' parameter is set to 'compress' or 'resize'
+            action = request.form.get('action')
+            if action == 'compress':
+                return compress_pdf()
+            elif action == 'resize':
+                return resize_pdf()
+    return render_template('resize_pdf.html')
+        
 
-# Route to serve the text file for download
-@app1.route('/download/<filename>')
-def download_file(filename):
-    return send_file(filename, as_attachment=True)
+def resize_pdf():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_input, \
+                 tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_output:
+                temp_input.write(file.read())
+                temp_input.seek(0)
+                
+                # Compress the PDF
+                pdf_document = fitz.open(temp_input.name)
+                pdf_writer = fitz.open()
+
+                for page_num in range(len(pdf_document)):
+                    page = pdf_document.load_page(page_num)
+                    pix = page.get_pixmap()
+                    img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+                    img = img.convert("RGB")
+                    img_byte_array = io.BytesIO()
+                    img.save(img_byte_array, format='JPEG', quality=100)
+                    img_byte_array.seek(0)
+                    pdf_writer.new_page(width=img.width, height=img.height)
+                    pdf_writer[-1].insert_image((0, 0, img.width, img.height), stream=img_byte_array.read())
+                    img_byte_array.close()
+
+                 # Save the compressed PDF to the output file
+                output_filename = f"resized_{file.filename}"
+                output_path = os.path.join(tempfile.gettempdir(), output_filename)
+                pdf_writer.save(output_path)
+                pdf_writer.close()
+
+                # Clean up resources
+                pdf_document.close()
+                return send_file(output_path, as_attachment=True, download_name=output_filename)
+            
+# Function to compress uploaded PDF
+def compress_pdf():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_input, \
+                tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_output:
+                temp_input.write(file.read())
+                temp_input.seek(0)
+
+                # Open the input PDF file
+                pdf_reader = PdfReader(temp_input.name)
+                pdf_writer = PdfWriter()
+
+                # Compress each page's content streams
+                for page in pdf_reader.pages:
+                    page.compress_content_streams()
+                    pdf_writer.add_page(page)
+
+                # Save the compressed PDF to the output file
+                output_filename = f"compressed_{file.filename}"
+                temp_output_path = os.path.join(tempfile.gettempdir(), output_filename)
+                with open(temp_output_path, 'wb') as f:
+                    pdf_writer.write(f)
+
+                # Return the compressed PDF for download
+                return send_file(temp_output_path, as_attachment=True, download_name=output_filename)
 
 
 # Run the Flask application
